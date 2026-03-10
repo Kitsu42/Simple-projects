@@ -1,7 +1,12 @@
-Descrição meia boca do que está aqui:
+# Simple projects
+The idea is to create simple systems in monolith just to train basic concepts.
 
-secretNumber.c
-    Um simples joguinho de adivinhar o numero, posso melhorar isso depois.
+## C Programs
+### Drawing shapes C
 
-Desenho em C.c
-    Um sistema que desenha formas *-* 
+### Secret number game
+
+### Voting system
+
+## Python Programs
+### Clock
