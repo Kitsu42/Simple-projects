@@ -10,3 +10,4 @@ The idea is to create simple systems in monolith just to train basic concepts.
 
 ## Python Programs
 ### Clock
+### Mine bank
