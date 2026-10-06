@@ -1,11 +1,24 @@
+import "reflect-metadata";
+import "dotenv/config";
 import express from "express";
+import { AppDataSource } from "./data-source";
+import apiRouter from "./routes";
 
 const app = express();
+app.use(express.json());
+app.use("/api", apiRouter);
 
-import login from"./controllers/login"
+const port = Number(process.env.PORT ?? 8080);
 
-app.use('/', login)
+async function start(): Promise<void> {
+  try {
+    await AppDataSource.initialize();
+    await AppDataSource.runMigrations();
+    app.listen(port, () => console.log(`API disponível em http://localhost:${port}/api`));
+  } catch (error) {
+    console.error("Não foi possível iniciar a API:", error);
+    process.exitCode = 1;
+  }
+}
 
-app.listen(process.env.PORT, () => {
-console.log('Servidor iniciado na porta ${process.env.PORT}: http://localhost:${process.env.PORT}');
-});
+void start();

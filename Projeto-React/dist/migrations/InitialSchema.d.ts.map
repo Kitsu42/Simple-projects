@@ -1,0 +1,1 @@
+{"version":3,"file":"InitialSchema.d.ts","sourceRoot":"","sources":["../../src/migrations/InitialSchema.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,kBAAkB,EAAE,WAAW,EAAS,MAAM,SAAS,CAAC;AAEjE,qBAAa,0BAA2B,YAAW,kBAAkB;IACnE,IAAI,SAAgC;IAEvB,EAAE,CAAC,WAAW,EAAE,WAAW,GAAG,OAAO,CAAC,IAAI,CAAC,CAsCvD;IAEY,IAAI,CAAC,WAAW,EAAE,WAAW,GAAG,OAAO,CAAC,IAAI,CAAC,CAMzD;CACF"}
