@@ -8,9 +8,11 @@ import { Situation } from "./entities/Situation";
 import { User } from "./entities/User";
 import { InitialSchema1710000000000 } from "./migrations/InitialSchema";
 
+// Garante que a aplicação use o mesmo banco para o qual foi projetada.
 const dialect = process.env.DB_DIALECT ?? "mysql";
 if (dialect !== "mysql") throw new Error("Este projeto está configurado para MySQL (DB_DIALECT=mysql).");
 
+// Configuração central do TypeORM: aponta para o MySQL, carrega as entidades e as migrations.
 export const AppDataSource = new DataSource({
   type: "mysql",
   host: process.env.DB_HOST ?? "localhost",

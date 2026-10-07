@@ -2,15 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.crudController = crudController;
 const crudService_1 = require("../services/crudService");
+// Fábrica de controladores genéricos para cada recurso da API.
 function crudController(repository, relations = [], requiredOnCreate = []) {
     const service = new crudService_1.CrudService(repository, relations);
     const relationIds = new Set(relations.map(({ idField }) => idField));
     const allowed = new Set(["name", "nameSituation", "email", ...relationIds]);
+    // Padroniza as respostas de erro para a camada HTTP.
     const sendError = (error, res) => {
         const message = error instanceof Error ? error.message : "Erro inesperado";
         const status = /foreign key|cannot add or update|constraint/i.test(message) ? 400 : 500;
         res.status(status).json({ error: status === 400 ? "Referência inválida" : "Erro interno", detail: message });
     };
+    // Valida o corpo da requisição para impedir campos inválidos ou vazios.
     const validateBody = (body) => {
         if (!body || typeof body !== "object" || Array.isArray(body))
             return null;
@@ -27,11 +30,13 @@ function crudController(repository, relations = [], requiredOnCreate = []) {
         }
         return input;
     };
+    // Converte o ID vindo da URL em número válido.
     const parseId = (value) => {
         const id = Number(value);
         return Number.isInteger(id) && id > 0 ? id : null;
     };
     return {
+        // Lista registros paginados; aceita page e limit pela query string.
         list: async (req, res) => {
             const page = Number(req.query.page ?? 1);
             const limit = Number(req.query.limit ?? 10);
@@ -45,6 +50,7 @@ function crudController(repository, relations = [], requiredOnCreate = []) {
                 return sendError(error, res);
             }
         },
+        // Busca um recurso por ID.
         get: async (req, res) => {
             const id = parseId(String(req.params.id));
             if (id === null)
@@ -57,6 +63,7 @@ function crudController(repository, relations = [], requiredOnCreate = []) {
                 return sendError(error, res);
             }
         },
+        // Cria um novo registro, validando campos obrigatórios antes de salvar.
         create: async (req, res) => {
             const input = validateBody(req.body);
             if (!input || !Object.keys(input).length)
@@ -70,6 +77,7 @@ function crudController(repository, relations = [], requiredOnCreate = []) {
                 return sendError(error, res);
             }
         },
+        // Atualiza um registro existente com os campos enviados.
         update: async (req, res) => {
             const input = validateBody(req.body);
             if (!input || !Object.keys(input).length)
@@ -85,6 +93,7 @@ function crudController(repository, relations = [], requiredOnCreate = []) {
                 return sendError(error, res);
             }
         },
+        // Remove um registro após confirmar que ele existe.
         remove: async (req, res) => {
             const id = parseId(String(req.params.id));
             if (id === null)

@@ -13,10 +13,13 @@ exports.Product = void 0;
 const typeorm_1 = require("typeorm");
 const ProductCategory_1 = require("./ProductCategory");
 const ProductSituation_1 = require("./ProductSituation");
+// Representa a tabela 'products' e relaciona cada produto com categoria e disponibilidade.
 let Product = class Product {
     id;
     name;
+    // Status do produto, como disponível ou indisponível.
     productSituation;
+    // Categoria do produto, como eletrônicos, alimentos ou geral.
     productCategory;
     createdAt;
     updatedAt;

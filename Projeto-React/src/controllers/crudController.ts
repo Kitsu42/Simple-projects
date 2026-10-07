@@ -2,15 +2,20 @@ import { Request, Response } from "express";
 import { ObjectLiteral, Repository } from "typeorm";
 import { CrudService, RelationInput } from "../services/crudService";
 
+// Fábrica de controladores genéricos para cada recurso da API.
 export function crudController<T extends ObjectLiteral>(repository: Repository<T>, relations: RelationInput[] = [], requiredOnCreate: string[] = []) {
   const service = new CrudService(repository, relations);
   const relationIds = new Set(relations.map(({ idField }) => idField));
   const allowed = new Set(["name", "nameSituation", "email", ...relationIds]);
+
+  // Padroniza as respostas de erro para a camada HTTP.
   const sendError = (error: unknown, res: Response) => {
     const message = error instanceof Error ? error.message : "Erro inesperado";
     const status = /foreign key|cannot add or update|constraint/i.test(message) ? 400 : 500;
     res.status(status).json({ error: status === 400 ? "Referência inválida" : "Erro interno", detail: message });
   };
+
+  // Valida o corpo da requisição para impedir campos inválidos ou vazios.
   const validateBody = (body: unknown): Record<string, unknown> | null => {
     if (!body || typeof body !== "object" || Array.isArray(body)) return null;
     const input = body as Record<string, unknown>;
@@ -23,12 +28,15 @@ export function crudController<T extends ObjectLiteral>(repository: Repository<T
     }
     return input;
   };
+
+  // Converte o ID vindo da URL em número válido.
   const parseId = (value: string): number | null => {
     const id = Number(value);
     return Number.isInteger(id) && id > 0 ? id : null;
   };
 
   return {
+    // Lista registros paginados; aceita page e limit pela query string.
     list: async (req: Request, res: Response) => {
       const page = Number(req.query.page ?? 1);
       const limit = Number(req.query.limit ?? 10);
@@ -37,6 +45,8 @@ export function crudController<T extends ObjectLiteral>(repository: Repository<T
       }
       try { return res.json(await service.list(page, limit)); } catch (error) { return sendError(error, res); }
     },
+
+    // Busca um recurso por ID.
     get: async (req: Request, res: Response) => {
       const id = parseId(String(req.params.id));
       if (id === null) return res.status(400).json({ error: "ID deve ser um inteiro positivo" });
@@ -45,12 +55,16 @@ export function crudController<T extends ObjectLiteral>(repository: Repository<T
         return item ? res.json(item) : res.status(404).json({ error: "Registro não encontrado" });
       } catch (error) { return sendError(error, res); }
     },
+
+    // Cria um novo registro, validando campos obrigatórios antes de salvar.
     create: async (req: Request, res: Response) => {
       const input = validateBody(req.body);
       if (!input || !Object.keys(input).length) return res.status(400).json({ error: "Corpo inválido ou sem campos permitidos" });
       if (requiredOnCreate.some((field) => !(field in input))) return res.status(400).json({ error: `Campos obrigatórios: ${requiredOnCreate.join(", ")}` });
       try { return res.status(201).json(await service.create(input)); } catch (error) { return sendError(error, res); }
     },
+
+    // Atualiza um registro existente com os campos enviados.
     update: async (req: Request, res: Response) => {
       const input = validateBody(req.body);
       if (!input || !Object.keys(input).length) return res.status(400).json({ error: "Corpo inválido ou sem campos permitidos" });
@@ -61,6 +75,8 @@ export function crudController<T extends ObjectLiteral>(repository: Repository<T
         return item ? res.json(await service.update(item, input)) : res.status(404).json({ error: "Registro não encontrado" });
       } catch (error) { return sendError(error, res); }
     },
+
+    // Remove um registro após confirmar que ele existe.
     remove: async (req: Request, res: Response) => {
       const id = parseId(String(req.params.id));
       if (id === null) return res.status(400).json({ error: "ID deve ser um inteiro positivo" });

@@ -12,11 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Situation = void 0;
 const typeorm_1 = require("typeorm");
 const User_1 = require("./User");
+// Representa a tabela 'situations' e guarda os estados possíveis de um usuário.
 let Situation = class Situation {
     id;
     nameSituation;
     createdAt;
     updatedAt;
+    // Um estado pode estar associado a vários usuários.
     users;
 };
 exports.Situation = Situation;

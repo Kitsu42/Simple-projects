@@ -12,11 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductSituation = void 0;
 const typeorm_1 = require("typeorm");
 const Product_1 = require("./Product");
+// Armazena os estados possíveis de um produto, como disponível ou indisponível.
 let ProductSituation = class ProductSituation {
     id;
     name;
     createdAt;
     updatedAt;
+    // Um estado pode ser usado por vários produtos.
     products;
 };
 exports.ProductSituation = ProductSituation;

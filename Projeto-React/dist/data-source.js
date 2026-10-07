@@ -10,9 +10,11 @@ const Product_1 = require("./entities/Product");
 const Situation_1 = require("./entities/Situation");
 const User_1 = require("./entities/User");
 const InitialSchema_1 = require("./migrations/InitialSchema");
+// Garante que a aplicação use o mesmo banco para o qual foi projetada.
 const dialect = process.env.DB_DIALECT ?? "mysql";
 if (dialect !== "mysql")
     throw new Error("Este projeto está configurado para MySQL (DB_DIALECT=mysql).");
+// Configuração central do TypeORM: aponta para o MySQL, carrega as entidades e as migrations.
 exports.AppDataSource = new typeorm_1.DataSource({
     type: "mysql",
     host: process.env.DB_HOST ?? "localhost",

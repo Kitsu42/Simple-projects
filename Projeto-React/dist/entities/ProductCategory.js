@@ -12,11 +12,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductCategory = void 0;
 const typeorm_1 = require("typeorm");
 const Product_1 = require("./Product");
+// Tabela de categorias de produto usadas para classificar cada item cadastrado.
 let ProductCategory = class ProductCategory {
     id;
     name;
     createdAt;
     updatedAt;
+    // Uma categoria pode estar associada a vários produtos.
     products;
 };
 exports.ProductCategory = ProductCategory;

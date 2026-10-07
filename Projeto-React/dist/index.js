@@ -8,10 +8,13 @@ require("dotenv/config");
 const express_1 = __importDefault(require("express"));
 const data_source_1 = require("./data-source");
 const routes_1 = __importDefault(require("./routes"));
+// Cria a instância do servidor Express e habilita o parse de JSON.
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
+// Centraliza todas as rotas da aplicação sob o prefixo /api.
 app.use("/api", routes_1.default);
 const port = Number(process.env.PORT ?? 8080);
+// Inicializa a conexão com o banco e aplica as migrations antes de abrir a API.
 async function start() {
     try {
         await data_source_1.AppDataSource.initialize();
