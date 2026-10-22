@@ -1,4 +1,4 @@
-import { DeepPartial, ObjectLiteral, Repository } from "typeorm";
+import { DeepPartial, FindOptionsRelations, ObjectLiteral, Repository } from "typeorm";
 
 export interface RelationInput { field: string; idField: string }
 
@@ -6,10 +6,14 @@ export interface RelationInput { field: string; idField: string }
 export class CrudService<T extends ObjectLiteral> {
   constructor(private readonly repository: Repository<T>, private readonly relations: RelationInput[] = []) {}
 
+  private relationOptions(): FindOptionsRelations<T> {
+    return Object.fromEntries(this.relations.map(({ field }) => [field, true])) as FindOptionsRelations<T>;
+  }
+
   // Lista itens em páginas com paginação e carregamento de relações.
   async list(page: number, limit: number) {
     const [data, total] = await this.repository.findAndCount({
-      relations: this.relations.map(({ field }) => ({ [field]: true })) as never,
+      relations: this.relationOptions(),
       skip: (page - 1) * limit, take: limit, order: { id: "ASC" } as never,
     });
     return { data, pagination: { page, limit, total, pages: Math.ceil(total / limit) } };
@@ -17,7 +21,7 @@ export class CrudService<T extends ObjectLiteral> {
 
   // Busca um registro pelo ID, incluindo as relações configuradas.
   find(id: number): Promise<T | null> {
-    return this.repository.findOne({ where: { id } as never, relations: this.relations.map(({ field }) => ({ [field]: true })) as never });
+    return this.repository.findOne({ where: { id } as never, relations: this.relationOptions() });
   }
 
   // Cria um novo registro e converte IDs em objetos relacionados quando necessário.

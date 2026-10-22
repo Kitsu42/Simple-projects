@@ -7,6 +7,7 @@ export declare class CrudService<T extends ObjectLiteral> {
     private readonly repository;
     private readonly relations;
     constructor(repository: Repository<T>, relations?: RelationInput[]);
+    private relationOptions;
     list(page: number, limit: number): Promise<{
         data: T[];
         pagination: {

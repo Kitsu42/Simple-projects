@@ -1,0 +1,113 @@
+{
+  "info": {
+    "_postman_id": "a17fbc0d-3ce4-4a6b-a45e-b160412fc473",
+    "name": "Simple Projects API",
+    "description": "Coleção de integração para testar a API local. Execute os requests na ordem apresentada; os IDs criados são salvos automaticamente e a pasta Limpeza remove os registros de teste.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "situationId", "value": "" },
+    { "key": "productCategoryId", "value": "" },
+    { "key": "productSituationId", "value": "" },
+    { "key": "userId", "value": "" },
+    { "key": "productId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "01 - Saúde da API",
+      "item": [
+        {
+          "name": "API online",
+          "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api" },
+          "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('API respondeu com sucesso', function () {", "  pm.response.to.have.status(200);", "  pm.expect(pm.response.json().status).to.eql('online');", "});"] } }]
+        }
+      ]
+    },
+    {
+      "name": "02 - Dados de referência",
+      "item": [
+        {
+          "name": "Situações de usuário",
+          "item": [
+            { "name": "Listar situações", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/situations?page=1&limit=10" } },
+            {
+              "name": "Criar situação",
+              "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Situação criada', function () {", "  pm.response.to.have.status(201);", "  pm.collectionVariables.set('situationId', pm.response.json().id);", "});"] } }],
+              "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"nameSituation\": \"Postman - Ativo\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/api/situations" }
+            }
+          ]
+        },
+        {
+          "name": "Categorias de produto",
+          "item": [
+            { "name": "Listar categorias", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/product-categories?page=1&limit=10" } },
+            {
+              "name": "Criar categoria",
+              "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Categoria criada', function () {", "  pm.response.to.have.status(201);", "  pm.collectionVariables.set('productCategoryId', pm.response.json().id);", "});"] } }],
+              "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Postman - Geral\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/api/product-categories" }
+            }
+          ]
+        },
+        {
+          "name": "Situações de produto",
+          "item": [
+            { "name": "Listar situações de produto", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/product-situations?page=1&limit=10" } },
+            {
+              "name": "Criar situação de produto",
+              "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Situação de produto criada', function () {", "  pm.response.to.have.status(201);", "  pm.collectionVariables.set('productSituationId', pm.response.json().id);", "});"] } }],
+              "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Postman - Disponível\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/api/product-situations" }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "03 - Recursos relacionados",
+      "item": [
+        {
+          "name": "Usuários",
+          "item": [
+            { "name": "Listar usuários (paginado)", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/users?page=1&limit=10" } },
+            {
+              "name": "Criar usuário",
+              "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Usuário criado', function () {", "  pm.response.to.have.status(201);", "  pm.collectionVariables.set('userId', pm.response.json().id);", "});"] } }],
+              "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Usuário Postman\",\n  \"email\": \"postman-{{$guid}}@example.com\",\n  \"situationId\": \"{{situationId}}\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/api/users" }
+            },
+            { "name": "Buscar usuário criado", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/users/{{userId}}" } },
+            {
+              "name": "Atualizar usuário",
+              "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Usuário Postman atualizado\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/api/users/{{userId}}" }
+            }
+          ]
+        },
+        {
+          "name": "Produtos",
+          "item": [
+            { "name": "Listar produtos (paginado)", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/products?page=1&limit=10" } },
+            {
+              "name": "Criar produto",
+              "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": ["pm.test('Produto criado', function () {", "  pm.response.to.have.status(201);", "  pm.collectionVariables.set('productId', pm.response.json().id);", "});"] } }],
+              "request": { "method": "POST", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Produto Postman\",\n  \"productSituationId\": \"{{productSituationId}}\",\n  \"productCategoryId\": \"{{productCategoryId}}\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/api/products" }
+            },
+            { "name": "Buscar produto criado", "request": { "method": "GET", "header": [], "url": "{{baseUrl}}/api/products/{{productId}}" } },
+            {
+              "name": "Atualizar produto",
+              "request": { "method": "PATCH", "header": [{ "key": "Content-Type", "value": "application/json" }], "body": { "mode": "raw", "raw": "{\n  \"name\": \"Produto Postman atualizado\"\n}", "options": { "raw": { "language": "json" } } }, "url": "{{baseUrl}}/api/products/{{productId}}" }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "04 - Limpeza (execute ao final)",
+      "item": [
+        { "name": "Excluir produto", "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/products/{{productId}}" } },
+        { "name": "Excluir usuário", "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/users/{{userId}}" } },
+        { "name": "Excluir situação de produto", "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/product-situations/{{productSituationId}}" } },
+        { "name": "Excluir categoria", "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/product-categories/{{productCategoryId}}" } },
+        { "name": "Excluir situação de usuário", "request": { "method": "DELETE", "header": [], "url": "{{baseUrl}}/api/situations/{{situationId}}" } }
+      ]
+    }
+  ]
+}

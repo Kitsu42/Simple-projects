@@ -9,17 +9,20 @@ class CrudService {
         this.repository = repository;
         this.relations = relations;
     }
+    relationOptions() {
+        return Object.fromEntries(this.relations.map(({ field }) => [field, true]));
+    }
     // Lista itens em páginas com paginação e carregamento de relações.
     async list(page, limit) {
         const [data, total] = await this.repository.findAndCount({
-            relations: this.relations.map(({ field }) => ({ [field]: true })),
+            relations: this.relationOptions(),
             skip: (page - 1) * limit, take: limit, order: { id: "ASC" },
         });
         return { data, pagination: { page, limit, total, pages: Math.ceil(total / limit) } };
     }
     // Busca um registro pelo ID, incluindo as relações configuradas.
     find(id) {
-        return this.repository.findOne({ where: { id }, relations: this.relations.map(({ field }) => ({ [field]: true })) });
+        return this.repository.findOne({ where: { id }, relations: this.relationOptions() });
     }
     // Cria um novo registro e converte IDs em objetos relacionados quando necessário.
     async create(input) {

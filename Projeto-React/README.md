@@ -514,8 +514,12 @@ npm run dev
 2. Crie o banco MySQL
 3. Instale as dependências com `npm install`
 4. Execute `npm start` para subir a API
-5. Execute `npm run seed` para popular registros básicos
-6. Utilize os endpoints em `/api/...`
+5. Importe `postman/simple-projects-api.postman_collection.json` no Postman
+6. Importe e selecione `postman/local.postman_environment.json`
+7. Envie `01 - Saúde da API > API online` e confirme a resposta `{"name":"Simple Projects API","status":"online"}`
+8. Execute os requests na ordem das pastas para testar o CRUD; os IDs são guardados automaticamente. Execute `04 - Limpeza` por último para remover os registros criados no teste.
+
+O `.env` precisa apontar para um servidor MySQL em execução e para um banco já criado. Ao iniciar, a API aplica as migrations pendentes. A coleção cria seus próprios registros relacionados, então não é necessário executar `npm run seed` antes dos testes. Para dados de exemplo fora do Postman, use `npm run seed` em outro terminal.
 
 ---
 
