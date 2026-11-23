@@ -1,27 +1,16 @@
-import os
+import os,sys
 
 print("================================\n       SYSTEM INSPECTOR         \n================================")
 print("Vamos tentar fazer essa budega")
 
-entrada = input("insira alguma bosta: ")
+def func_0():
+    os.system('cls' if os.name == 'nt' else 'clear')
+    sys.exit(0)
+def func_1(): print("Opção 1")
+def func_2(): print("Opção 2")
+def func_3(): print("Opção 3")
+def func_4(): print("Opção 4")
 
-os.system('cls' if os.name == 'nt' else 'clear')
-
-func = int(input("O que deseja que seja feito com esse dado?\n"))
-
-if func == 0:
-    print("0")
-elif func == 1:
-    print("1")
-elif func == 2:
-    print("2")
-elif func == 3:
-    print("3")
-elif func == 4:
-    print("4")
-elif func == 5:
-    print("5")
-else:
-    print("Só são aceitos numeros de 0 a 5") #tratamento de erro não está funcionando
-
-
+opcoes = [func_0,func_1, func_2, func_3, func_4]
+index = int(input("O que deseja?\n1-Verificar número\n2-Analisar texto\n3-Calcular estatísticas\n4-Gerar relatório\n0-sair\n"))
+opcoes[index]()   
